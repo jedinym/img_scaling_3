@@ -31,7 +31,6 @@ namespace img_scaling_3
             if (ofd_original.ShowDialog() == DialogResult.OK)
             {
                 string originalFilePath = ofd_original.FileName;
-                //OriginalFile = new Bitmap(originalFilePath);
                 StoredBytes = ByteImage.GetBytesFromFilepath(originalFilePath);
                 OriginalFile = ByteImage.GetImageFromBytes(StoredBytes);
 
@@ -208,16 +207,13 @@ namespace img_scaling_3
         private bool IsFileLocked(string _filepath)
         {
             FileInfo file = new FileInfo(_filepath);
-            Stream stream = null;
+            FileStream stream = null;
 
             try
             {
                 stream = file.Open(FileMode.Open, FileAccess.Write, FileShare.None);
             }
-            catch (FileNotFoundException)
-            {
-                 
-            }
+            catch (FileNotFoundException) { }
             catch (IOException)
             {
                 MessageBox.Show("The file is locked!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
