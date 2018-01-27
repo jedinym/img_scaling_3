@@ -15,7 +15,9 @@ namespace img_scaling_3
     public partial class frm_main : Form
     {
         Bitmap OriginalFile;
+        byte[] StoredBytes;
         string Filter = "Image Files(*.BMP; *.JPEG; *.JPG; *.PNG)|*.BMP; *.JPEG; *.JPG; *.PNG";
+
         public frm_main()
         {
             InitializeComponent();
@@ -28,8 +30,10 @@ namespace img_scaling_3
 
             if (ofd_original.ShowDialog() == DialogResult.OK)
             {
-                string OriginalFilePath = ofd_original.FileName;
-                OriginalFile = new Bitmap(OriginalFilePath);
+                string originalFilePath = ofd_original.FileName;
+                //OriginalFile = new Bitmap(originalFilePath);
+                StoredBytes = ByteImage.GetBytesFromFilepath(originalFilePath);
+                OriginalFile = ByteImage.GetImageFromBytes(StoredBytes);
 
                 Bitmap pictureBoxFile = ScaleDownForPictureBox(OriginalFile);
                 pbx_original.Image = pictureBoxFile;
@@ -160,43 +164,43 @@ namespace img_scaling_3
                 if (sfd_edited.ShowDialog() == DialogResult.OK)
                 {
                     string extension = Path.GetExtension(sfd_edited.FileName);
-                    //if (!IsFileLocked(sfd_edited.FileName))
-                    //{
-                    //    switch (extension)
-                    //    {
-                    //        case ".bmp":
-                    //            format = ImageFormat.Bmp;
-                    //            break;
-                    //        case ".jpeg":
-                    //            format = ImageFormat.Jpeg;
-                    //            break;
-                    //        case ".jpg":
-                    //            format = ImageFormat.Jpeg;
-                    //            break;
-                    //        case ".png":
-                    //            format = ImageFormat.Png;
-                    //            break;
-                    //    }
-                    //    _bitmap.Save(sfd_edited.FileName, format);
-                    //    lbl_saved.Visible = true;
-                    //}
-                    switch (extension)
+                    if (!IsFileLocked(sfd_edited.FileName))
                     {
-                        case ".bmp":
-                            format = ImageFormat.Bmp;
-                            break;
-                        case ".jpeg":
-                            format = ImageFormat.Jpeg;
-                            break;
-                        case ".jpg":
-                            format = ImageFormat.Jpeg;
-                            break;
-                        case ".png":
-                            format = ImageFormat.Png;
-                            break;
+                        switch (extension)
+                        {
+                            case ".bmp":
+                                format = ImageFormat.Bmp;
+                                break;
+                            case ".jpeg":
+                                format = ImageFormat.Jpeg;
+                                break;
+                            case ".jpg":
+                                format = ImageFormat.Jpeg;
+                                break;
+                            case ".png":
+                                format = ImageFormat.Png;
+                                break;
+                        }
+                        _bitmap.Save(sfd_edited.FileName, format);
+                        lbl_saved.Visible = true;
                     }
-                    _bitmap.Save(sfd_edited.FileName, format);
-                    lbl_saved.Visible = true;
+                    //switch (extension)
+                    //{
+                    //    case ".bmp":
+                    //        format = ImageFormat.Bmp;
+                    //        break;
+                    //    case ".jpeg":
+                    //        format = ImageFormat.Jpeg;
+                    //        break;
+                    //    case ".jpg":
+                    //        format = ImageFormat.Jpeg;
+                    //        break;
+                    //    case ".png":
+                    //        format = ImageFormat.Png;
+                    //        break;
+                    //}
+                    //_bitmap.Save(sfd_edited.FileName, format);
+                    //lbl_saved.Visible = true;
                 }
             }
         }
@@ -209,6 +213,10 @@ namespace img_scaling_3
             try
             {
                 stream = file.Open(FileMode.Open, FileAccess.Write, FileShare.None);
+            }
+            catch (FileNotFoundException)
+            {
+                 
             }
             catch (IOException)
             {
