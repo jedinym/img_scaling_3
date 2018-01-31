@@ -15,7 +15,6 @@ namespace img_scaling_3
     public partial class frm_main : Form
     {
         int MaxDim = 11000;
-        //Bitmap OriginalFile;
         Picture OriginalFile;
         byte[] StoredBytes;
         string Filter = "Image Files(*.BMP; *.JPEG; *.JPG; *.PNG)|*.BMP; *.JPEG; *.JPG; *.PNG|All Files(*.*)|*.*";
@@ -94,23 +93,6 @@ namespace img_scaling_3
 
                 if (nmr_width.Value > MaxDim || nmr_height.Value > MaxDim)
                 {
-
-                    //if (_useWidth == 2)
-                    //{
-                    //    bitmapHeight = _dimension * OriginalFile.ratio;
-                    //    bitmapWidth = _dimension;
-                    //    nmr_height.Value = (int)bitmapHeight;
-                    //}
-                    //else
-                    //{
-                    //    bitmapHeight = _dimension;
-                    //    bitmapWidth = _dimension * OriginalFile.ratio;
-                    //    nmr_width.Value = (int)bitmapWidth;
-                    //}
-
-                    //Math.Round(bitmapHeight, 1);
-                    //Math.Round(bitmapWidth, 1);
-
                     MessageBox.Show("Max dimension exceeded;" + Environment.NewLine + "Setting maximum possible dimension...", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     size = GetMaxSize(OriginalFile.ratio);
 
@@ -242,23 +224,6 @@ namespace img_scaling_3
                         _bitmap.Save(sfd_edited.FileName, format);
                         lbl_saved.Visible = true;
                     }
-                    //switch (extension)
-                    //{
-                    //    case ".bmp":
-                    //        format = ImageFormat.Bmp;
-                    //        break;
-                    //    case ".jpeg":
-                    //        format = ImageFormat.Jpeg;
-                    //        break;
-                    //    case ".jpg":
-                    //        format = ImageFormat.Jpeg;
-                    //        break;
-                    //    case ".png":
-                    //        format = ImageFormat.Png;
-                    //        break;
-                    //}
-                    //_bitmap.Save(sfd_edited.FileName, format);
-                    //lbl_saved.Visible = true;
                 }
             }
         }
