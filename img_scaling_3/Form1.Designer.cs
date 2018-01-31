@@ -78,6 +78,10 @@
             this.btn_load.UseVisualStyleBackColor = true;
             this.btn_load.Click += new System.EventHandler(this.btn_load_Click);
             // 
+            // ofd_original
+            // 
+            this.ofd_original.FileName = "*.*";
+            // 
             // btn_resize
             // 
             this.btn_resize.Location = new System.Drawing.Point(586, 34);
@@ -167,7 +171,6 @@
             // 
             // frm_main
             // 
-            this.AcceptButton = this.btn_resize;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(829, 486);

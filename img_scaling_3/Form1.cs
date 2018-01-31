@@ -16,7 +16,7 @@ namespace img_scaling_3
     {
         Bitmap OriginalFile;
         byte[] StoredBytes;
-        string Filter = "Image Files(*.BMP; *.JPEG; *.JPG; *.PNG)|*.BMP; *.JPEG; *.JPG; *.PNG|All Files(*.*)|*.*";
+        string Filter = "Image Files(*.BMP; *.JPEG; *.JPG; *.PNG)|*.BMP; *.JPEG; *.JPG; *.PNG";
 
         public frm_main()
         {
@@ -32,19 +32,11 @@ namespace img_scaling_3
             {
                 string originalFilePath = ofd_original.FileName;
                 StoredBytes = ByteImage.GetBytesFromFilepath(originalFilePath);
-                if (StoredBytes != null)
-                {
-                    OriginalFile = ByteImage.GetImageFromBytes(StoredBytes);
+                OriginalFile = ByteImage.GetImageFromBytes(StoredBytes);
 
-                    Bitmap pictureBoxFile = ScaleDownForPictureBox(OriginalFile);
-                    pbx_original.Image = pictureBoxFile;
-                    btn_resize_Click(null, null);
-                    //pbx_edited.Image = pictureBoxFile;
-                }
-                else
-                {
-                    MessageBox.Show("File not convertible to bitmap!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                }
+                Bitmap pictureBoxFile = ScaleDownForPictureBox(OriginalFile);
+                pbx_original.Image = pictureBoxFile;
+                pbx_edited.Image = pictureBoxFile;
             }
         }
         private void btn_resize_Click(object sender, EventArgs e)
@@ -119,18 +111,6 @@ namespace img_scaling_3
                 return new Bitmap(_bitmap, size);
             }
             return (Bitmap)pbx_original.Image;        
-        }
-        private Size GetMaxSize(double _ratio)
-        {
-            Bitmap bitmap = OriginalFile;
-            bool isWide = false;
-            
-            if (bitmap.Width >= bitmap.Height)
-            {
-                isWide = true;
-            }
-            
-
         }
         private int GetUsage(bool _show = true)
         {
@@ -228,7 +208,7 @@ namespace img_scaling_3
         {
             FileInfo file = new FileInfo(_filepath);
             FileStream stream = null;
-       
+
             try
             {
                 stream = file.Open(FileMode.Open, FileAccess.Write, FileShare.None);
@@ -248,5 +228,6 @@ namespace img_scaling_3
             }
             return false;
         }
+
     }
 }
