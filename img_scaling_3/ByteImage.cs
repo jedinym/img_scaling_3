@@ -20,16 +20,33 @@ namespace img_scaling_3
         }
         static public byte[] GetBytesFromFilepath(string _filepath)
         {
+            Bitmap bitmap = null;
             MemoryStream ms = new MemoryStream();
-            Bitmap bitmap = new Bitmap(_filepath);
-            bitmap.Save(ms, ImageFormat.Bmp);
-            bitmap.Dispose();
-            return ms.ToArray();
+            try
+            {
+                bitmap = new Bitmap(_filepath);
+                bitmap.Save(ms, ImageFormat.Bmp);
+                bitmap.Dispose();
+
+                return ms.ToArray();
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+            finally
+            {
+                if (bitmap != null)
+                {
+                    bitmap.Dispose();
+                }
+            }
         }
         static public Bitmap GetImageFromBytes(byte[] _imageBytes)
         {
             MemoryStream ms = new MemoryStream(_imageBytes);
-            Image image = Image.FromStream(ms);
+            Image image = Image.FromStream(ms);           
+            image = Image.FromStream(ms);
             Bitmap returnBitmap = new Bitmap(image);
             return returnBitmap;
         }
