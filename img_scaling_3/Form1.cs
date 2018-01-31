@@ -14,9 +14,11 @@ namespace img_scaling_3
 {
     public partial class frm_main : Form
     {
-        Bitmap OriginalFile;
+        int MaxDim = 11000;
+        //Bitmap OriginalFile;
+        Picture OriginalFile;
         byte[] StoredBytes;
-        string Filter = "Image Files(*.BMP; *.JPEG; *.JPG; *.PNG)|*.BMP; *.JPEG; *.JPG; *.PNG";
+        string Filter = "Image Files(*.BMP; *.JPEG; *.JPG; *.PNG)|*.BMP; *.JPEG; *.JPG; *.PNG|All Files(*.*)|*.*";
 
         public frm_main()
         {
@@ -32,47 +34,45 @@ namespace img_scaling_3
             {
                 string originalFilePath = ofd_original.FileName;
                 StoredBytes = ByteImage.GetBytesFromFilepath(originalFilePath);
-                OriginalFile = ByteImage.GetImageFromBytes(StoredBytes);
-
-                Bitmap pictureBoxFile = ScaleDownForPictureBox(OriginalFile);
-                pbx_original.Image = pictureBoxFile;
-                pbx_edited.Image = pictureBoxFile;
+                if (StoredBytes != null)
+                {
+                    OriginalFile = new Picture(ByteImage.GetImageFromBytes(StoredBytes));
+                    Bitmap pictureBoxFile = ScaleDownForPictureBox();
+                    pbx_original.Image = pictureBoxFile;
+                    btn_resize_Click(null, null);
+                    //pbx_edited.Image = pictureBoxFile;
+                }
+                else
+                {
+                    MessageBox.Show("File not convertible to bitmap!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
         }
         private void btn_resize_Click(object sender, EventArgs e)
         {
-            if (OriginalFile != null)
+            if (OriginalFile.Bitmap != null && (nmr_width.Value > 0 || nmr_height.Value > 0))
             {
-                pbx_edited.Image = ScaleDownImage(OriginalFile, GetDimension(), GetUsage());
+                pbx_edited.Image = ScaleDownImage(OriginalFile.Bitmap, GetDimension(), GetUsage());
             }
         }
         private void btn_save_Click(object sender, EventArgs e)
         {
             int dimension = GetDimension();
-            Bitmap editedImage = ScaleDownImage(OriginalFile, dimension, GetUsage());
+            Bitmap editedImage = ScaleDownImage(OriginalFile.Bitmap, dimension, GetUsage());
             if (dimension != -1)
             {
                 Save(editedImage);
             }
         }
-        private Bitmap ScaleDownForPictureBox(Bitmap _bitmap)
+        private Bitmap ScaleDownForPictureBox()
         {
-            double bitmapWidth = _bitmap.Width;
-            double bitmapHeight = _bitmap.Height;
+            double bitmapWidth = OriginalFile.Bitmap.Width;
+            double bitmapHeight = OriginalFile.Bitmap.Height;
 
-            double PictureBoxWidth = pbx_original.Width;
-            double PictureBoxHeight = pbx_original.Height;
+            double pictureBoxWidth = pbx_original.Width;
+            double pictureBoxHeight = pbx_original.Height;
 
-            double ratio;
-
-            if (bitmapWidth >= bitmapHeight)
-            {
-                ratio = PictureBoxWidth / bitmapWidth;
-            }
-            else
-            {
-                ratio = PictureBoxHeight / bitmapHeight;
-            }
+            double ratio = (OriginalFile.isWide) ? pictureBoxWidth / bitmapWidth : pictureBoxHeight / bitmapHeight;
 
             bitmapHeight *= ratio;
             bitmapWidth *= ratio;
@@ -81,7 +81,7 @@ namespace img_scaling_3
             Math.Round(bitmapWidth, 1);
 
             Size size = new Size((int)bitmapWidth, (int)bitmapHeight);
-            return new Bitmap(_bitmap, size);
+            return new Bitmap(OriginalFile.Bitmap, size);
         }
         private Bitmap ScaleDownImage(Bitmap _bitmap, int _dimension, int _useWidth)
         {
@@ -90,27 +90,78 @@ namespace img_scaling_3
                 double bitmapWidth = _bitmap.Width;
                 double bitmapHeight = _bitmap.Height;
 
-                double ratio = 0;
+                Size size;
 
-                if (_useWidth == 1)
+                if (nmr_width.Value > MaxDim || nmr_height.Value > MaxDim)
                 {
-                    ratio = _dimension / bitmapWidth;
+
+                    //if (_useWidth == 2)
+                    //{
+                    //    bitmapHeight = _dimension * OriginalFile.ratio;
+                    //    bitmapWidth = _dimension;
+                    //    nmr_height.Value = (int)bitmapHeight;
+                    //}
+                    //else
+                    //{
+                    //    bitmapHeight = _dimension;
+                    //    bitmapWidth = _dimension * OriginalFile.ratio;
+                    //    nmr_width.Value = (int)bitmapWidth;
+                    //}
+
+                    //Math.Round(bitmapHeight, 1);
+                    //Math.Round(bitmapWidth, 1);
+
+                    MessageBox.Show("Max dimension exceeded;" + Environment.NewLine + "Setting maximum possible dimension...", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    size = GetMaxSize(OriginalFile.ratio);
+
                 }
-                else if (_useWidth == 2)
+                else
                 {
-                    ratio = _dimension / bitmapHeight;
+                    double newWidth;
+                    double newHeight;
+                    if (_useWidth == 1)
+                    {
+                        newWidth = (double)nmr_width.Value;
+                        newHeight = ((newWidth * OriginalFile.ratio) < 1) ? 1 : newWidth * OriginalFile.ratio;
+
+                    }
+                    else
+                    {
+                        newHeight = (double)nmr_height.Value;
+                        newWidth = ((newHeight * OriginalFile.ratio) < 1) ? 1 : newHeight * OriginalFile.ratio; 
+                    }
+
+                //bitmapHeight *= OriginalFile.ratio;
+                //bitmapWidth *= OriginalFile.ratio;
+
+                size = new Size((int)newWidth, (int)newHeight);
                 }
 
-                bitmapHeight *= ratio;
-                bitmapWidth *= ratio;
-
-                Math.Round(bitmapHeight, 1);
-                Math.Round(bitmapWidth, 1);
-
-                Size size = new Size((int)bitmapWidth, (int)bitmapHeight);
+                //new Size((int)bitmapWidth, (int)bitmapHeight);
                 return new Bitmap(_bitmap, size);
+
             }
             return (Bitmap)pbx_original.Image;        
+        }
+        private Size GetMaxSize(double _ratio)
+        {
+            double width;
+            double height;
+
+            if (OriginalFile.isWide)
+            {
+                width = MaxDim;
+                height = width * _ratio;
+                Math.Round(height, 0);
+            }
+            else
+            {
+                height = MaxDim;
+                width = height * _ratio;
+                Math.Round(width, 0);
+            }
+
+            return new Size((int)width, (int)height);
         }
         private int GetUsage(bool _show = true)
         {
@@ -142,8 +193,16 @@ namespace img_scaling_3
         {      
             decimal dimension = -1m;
             int usage = GetUsage(false);
+            decimal nmrWdt = nmr_width.Value;
+            decimal nmrHgt = nmr_height.Value;
 
-            if (usage == 1)
+            if (nmrWdt > MaxDim || nmrHgt > MaxDim)
+            {
+                MessageBox.Show("Max dimension exceeded;" + Environment.NewLine + "Setting maximum possible dimension...", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return MaxDim;
+            }
+
+            if (usage == 1) // if usage is 1 => use width
             {
                 dimension = nmr_width.Value;
             }
@@ -203,12 +262,11 @@ namespace img_scaling_3
                 }
             }
         }
-        
         private bool IsFileLocked(string _filepath)
         {
             FileInfo file = new FileInfo(_filepath);
             FileStream stream = null;
-
+       
             try
             {
                 stream = file.Open(FileMode.Open, FileAccess.Write, FileShare.None);
@@ -228,6 +286,5 @@ namespace img_scaling_3
             }
             return false;
         }
-
     }
 }
