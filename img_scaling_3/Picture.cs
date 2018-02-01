@@ -12,37 +12,44 @@ namespace img_scaling_3
     {
         public Bitmap Bitmap { get; set; }
         public bool isWide { get; private set; }
-        public double ratio { get; private set; }
+        public double ratioWH { get; private set; }
+        public double ratioHW { get; private set; }
 
         public Picture(Bitmap _bitmap)
         {
             Bitmap = _bitmap;
-            isWide = SetIsWide();
-            ratio = SetRatio();
+            SetIsWide();
+            SetRatios();
         }
-        private bool SetIsWide()
+        private void SetIsWide()
         {
             try
             {
-                return (Bitmap.Width >= Bitmap.Height) ? true : false;
+                //return (Bitmap.Width >= Bitmap.Height) ? true : false;
+                isWide = (Bitmap.Width >= Bitmap.Height) ? true : false;
             }
             catch (NullReferenceException)
             {
-                return false;
+                isWide = false;
+                //return false;
             }
         }
 
-        private double SetRatio()
+        private void SetRatios()
         {
             try
             {
+                ratioWH = (double)Bitmap.Width / (double)Bitmap.Height;
+                ratioHW = (double)Bitmap.Height / (double)Bitmap.Width;
                 //return (Bitmap.Width >= Bitmap.Height) ? (double)Bitmap.Height/(double)Bitmap.Width : (double)Bitmap.Width/(double)Bitmap.Height;
-                return (double)Bitmap.Width / (double)Bitmap.Height;
+                //return (double)Bitmap.Width / (double)Bitmap.Height;
             }
             catch (NullReferenceException)
             {
-                return 0;
-            }  
+                //return 0;
+                ratioWH = 0;
+                ratioHW = 0;
+            }
         }
     }
 }

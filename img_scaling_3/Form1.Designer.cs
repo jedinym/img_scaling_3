@@ -80,6 +80,7 @@
             // 
             // btn_resize
             // 
+            this.btn_resize.Enabled = false;
             this.btn_resize.Location = new System.Drawing.Point(586, 34);
             this.btn_resize.Name = "btn_resize";
             this.btn_resize.Size = new System.Drawing.Size(92, 23);
