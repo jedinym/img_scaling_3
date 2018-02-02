@@ -15,6 +15,7 @@ namespace img_scaling_3
     public partial class frm_main : Form
     {
         int MaxDim = 11000;
+        //Bitmap OriginalFile;
         Picture OriginalFile;
         byte[] StoredBytes;
         string Filter = "Image Files(*.BMP; *.JPEG; *.JPG; *.PNG)|*.BMP; *.JPEG; *.JPG; *.PNG|All Files(*.*)|*.*";
@@ -35,6 +36,7 @@ namespace img_scaling_3
                 StoredBytes = ByteImage.GetBytesFromFilepath(originalFilePath);
                 if (StoredBytes != null)
                 {
+                    btn_resize.Enabled = true;
                     OriginalFile = new Picture(ByteImage.GetImageFromBytes(StoredBytes));
                     Bitmap pictureBoxFile = ScaleDownForPictureBox();
                     pbx_original.Image = pictureBoxFile;
@@ -86,65 +88,86 @@ namespace img_scaling_3
         {
             if (_useWidth != 3 && _dimension != -1 && _dimension != 0)
             {
-                double bitmapWidth = _bitmap.Width;
-                double bitmapHeight = _bitmap.Height;
+
+                double newWidth;
+                double newHeight;
 
                 Size size;
 
-                if (nmr_width.Value > MaxDim || nmr_height.Value > MaxDim)
+                if (OriginalFile.isWide)
                 {
-                    MessageBox.Show("Max dimension exceeded;" + Environment.NewLine + "Setting maximum possible dimension...", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    size = GetMaxSize(OriginalFile.ratio);
 
-                }
-                else
-                {
-                    double newWidth;
-                    double newHeight;
-                    if (_useWidth == 1)
+                    //image is wider than taller
+                    if (_useWidth == 2)
                     {
-                        newWidth = (double)nmr_width.Value;
-                        newHeight = ((newWidth * OriginalFile.ratio) < 1) ? 1 : newWidth * OriginalFile.ratio;
+                        //use height setting
+                        newHeight = (double)nmr_height.Value;
 
+                        if (newHeight * OriginalFile.ratioWH > MaxDim)
+                        {
+                            newWidth = MaxDim;
+                            newHeight = newWidth * OriginalFile.ratioHW;
+                        }
+                        else
+                        {
+                            newWidth = ((newHeight * OriginalFile.ratioWH) < 1) ? 1 : newHeight * OriginalFile.ratioWH;
+                        }
                     }
                     else
                     {
-                        newHeight = (double)nmr_height.Value;
-                        newWidth = ((newHeight * OriginalFile.ratio) < 1) ? 1 : newHeight * OriginalFile.ratio; 
+                        //use width setting
+                        newWidth = (double)nmr_width.Value;
+
+                        if (newWidth > MaxDim)
+                        {
+                            newWidth = MaxDim;
+                        }
+
+                        newHeight = newWidth * OriginalFile.ratioHW;
                     }
+                }
+                else
+                {
+                    //image is taller than wider
+                    if (_useWidth == 2)
+                    {
+                        //use height setting
+                        newHeight = (double)nmr_height.Value;
 
-                //bitmapHeight *= OriginalFile.ratio;
-                //bitmapWidth *= OriginalFile.ratio;
+                        if (newHeight > MaxDim)
+                        {
+                            newHeight = MaxDim;
+                        }
 
-                size = new Size((int)newWidth, (int)newHeight);
+                        newWidth = newHeight * OriginalFile.ratioWH;
+                    }
+                    else
+                    {
+                        //use width setting
+                        newWidth = (double)nmr_width.Value;
+
+                        if (newWidth * OriginalFile.ratioHW > MaxDim)
+                        {
+                            newHeight = MaxDim;
+                            newWidth = newHeight * OriginalFile.ratioWH;
+                        }
+                        else
+                        {
+                            newHeight = ((newWidth * OriginalFile.ratioHW) < 1) ? 1 : newWidth * OriginalFile.ratioHW;
+                        }
+
+                    }
                 }
 
-                //new Size((int)bitmapWidth, (int)bitmapHeight);
+                size = new Size((int)newWidth, (int)newHeight);
+
                 return new Bitmap(_bitmap, size);
 
             }
-            return (Bitmap)pbx_original.Image;        
-        }
-        private Size GetMaxSize(double _ratio)
-        {
-            double width;
-            double height;
 
-            if (OriginalFile.isWide)
-            {
-                width = MaxDim;
-                height = width * _ratio;
-                Math.Round(height, 0);
-            }
-            else
-            {
-                height = MaxDim;
-                width = height * _ratio;
-                Math.Round(width, 0);
-            }
-
-            return new Size((int)width, (int)height);
+            return (Bitmap)pbx_original.Image;
         }
+
         private int GetUsage(bool _show = true)
         {
             decimal nmrHeight = nmr_height.Value;
@@ -172,7 +195,7 @@ namespace img_scaling_3
             return useWidth;
         }
         private int GetDimension()
-        {      
+        {
             decimal dimension = -1m;
             int usage = GetUsage(false);
             decimal nmrWdt = nmr_width.Value;
@@ -224,6 +247,23 @@ namespace img_scaling_3
                         _bitmap.Save(sfd_edited.FileName, format);
                         lbl_saved.Visible = true;
                     }
+                    //switch (extension)
+                    //{
+                    //    case ".bmp":
+                    //        format = ImageFormat.Bmp;
+                    //        break;
+                    //    case ".jpeg":
+                    //        format = ImageFormat.Jpeg;
+                    //        break;
+                    //    case ".jpg":
+                    //        format = ImageFormat.Jpeg;
+                    //        break;
+                    //    case ".png":
+                    //        format = ImageFormat.Png;
+                    //        break;
+                    //}
+                    //_bitmap.Save(sfd_edited.FileName, format);
+                    //lbl_saved.Visible = true;
                 }
             }
         }
@@ -231,7 +271,7 @@ namespace img_scaling_3
         {
             FileInfo file = new FileInfo(_filepath);
             FileStream stream = null;
-       
+
             try
             {
                 stream = file.Open(FileMode.Open, FileAccess.Write, FileShare.None);
