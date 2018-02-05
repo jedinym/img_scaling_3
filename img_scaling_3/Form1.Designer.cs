@@ -212,6 +212,7 @@
             // frm_main
             // 
             this.AcceptButton = this.btn_resize;
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(829, 486);
@@ -233,6 +234,8 @@
             this.MaximizeBox = false;
             this.Name = "frm_main";
             this.Text = "Bildskalierung 2.0";
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.frm_main_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.frm_main_DragEnter);
             ((System.ComponentModel.ISupportInitialize)(this.pbx_original)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_edited)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nmr_height)).EndInit();

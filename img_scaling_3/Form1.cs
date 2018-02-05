@@ -302,5 +302,20 @@ namespace img_scaling_3
             }
             return false;
         }
+
+        private void frm_main_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Link;
+            }
+        }
+
+        private void frm_main_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            StoredBytes = ByteImage.GetBytesFromFilepath(files[0]);
+            //!!!dopisat co s nacitanymi Byte-ami [due date : 6.2.2018; assigend to Jediny M.]
+        }
     }
 }
