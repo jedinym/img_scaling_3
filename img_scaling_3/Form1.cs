@@ -40,6 +40,8 @@ namespace img_scaling_3
                     OriginalFile = new Picture(ByteImage.GetImageFromBytes(StoredBytes));
                     Bitmap pictureBoxFile = ScaleDownForPictureBox();
                     pbx_original.Image = pictureBoxFile;
+                    lbl_orig_size.Visible = true;
+                    lbl_orig_size.Text = Picture.SetSizeLabel(OriginalFile.Bitmap);
                     btn_resize_Click(null, null);
                     //pbx_edited.Image = pictureBoxFile;
                 }
@@ -54,6 +56,10 @@ namespace img_scaling_3
             if (OriginalFile.Bitmap != null && (nmr_width.Value > 0 || nmr_height.Value > 0))
             {
                 pbx_edited.Image = ScaleDownImage(OriginalFile.Bitmap, GetDimension(), GetUsage());
+                lbl_edit_size.Visible = true;
+                lbl_edit_size.Text = Picture.SetSizeLabel(pbx_edited.Image);
+                btn_reset.Enabled = true;
+                btn_save.Enabled = true;
             }
         }
         private void btn_save_Click(object sender, EventArgs e)
@@ -65,6 +71,11 @@ namespace img_scaling_3
                 Save(editedImage);
             }
         }
+        private void btn_reset_Click(object sender, EventArgs e)
+        {
+            pbx_edited.Image = pbx_original.Image;
+            lbl_edit_size.Text = Picture.SetSizeLabel(OriginalFile.Bitmap);
+        }
         private Bitmap ScaleDownForPictureBox()
         {
             double bitmapWidth = OriginalFile.Bitmap.Width;
@@ -73,7 +84,7 @@ namespace img_scaling_3
             double pictureBoxWidth = pbx_original.Width;
             double pictureBoxHeight = pbx_original.Height;
 
-            double ratio = (OriginalFile.isWide) ? pictureBoxWidth / bitmapWidth : pictureBoxHeight / bitmapHeight;
+            double ratio = (OriginalFile.IsWide) ? pictureBoxWidth / bitmapWidth : pictureBoxHeight / bitmapHeight;
 
             bitmapHeight *= ratio;
             bitmapWidth *= ratio;
@@ -94,7 +105,7 @@ namespace img_scaling_3
 
                 Size size;
 
-                if (OriginalFile.isWide)
+                if (OriginalFile.IsWide)
                 {
 
                     //image is wider than taller
@@ -103,14 +114,14 @@ namespace img_scaling_3
                         //use height setting
                         newHeight = (double)nmr_height.Value;
 
-                        if (newHeight * OriginalFile.ratioWH > MaxDim)
+                        if (newHeight * OriginalFile.RatioWh > MaxDim)
                         {
                             newWidth = MaxDim;
-                            newHeight = newWidth * OriginalFile.ratioHW;
+                            newHeight = newWidth * OriginalFile.RatioHw;
                         }
                         else
                         {
-                            newWidth = ((newHeight * OriginalFile.ratioWH) < 1) ? 1 : newHeight * OriginalFile.ratioWH;
+                            newWidth = ((newHeight * OriginalFile.RatioWh) < 1) ? 1 : newHeight * OriginalFile.RatioWh;
                         }
                     }
                     else
@@ -123,7 +134,7 @@ namespace img_scaling_3
                             newWidth = MaxDim;
                         }
 
-                        newHeight = newWidth * OriginalFile.ratioHW;
+                        newHeight = newWidth * OriginalFile.RatioHw;
                     }
                 }
                 else
@@ -139,21 +150,21 @@ namespace img_scaling_3
                             newHeight = MaxDim;
                         }
 
-                        newWidth = newHeight * OriginalFile.ratioWH;
+                        newWidth = newHeight * OriginalFile.RatioWh;
                     }
                     else
                     {
                         //use width setting
                         newWidth = (double)nmr_width.Value;
 
-                        if (newWidth * OriginalFile.ratioHW > MaxDim)
+                        if (newWidth * OriginalFile.RatioHw > MaxDim)
                         {
                             newHeight = MaxDim;
-                            newWidth = newHeight * OriginalFile.ratioWH;
+                            newWidth = newHeight * OriginalFile.RatioWh;
                         }
                         else
                         {
-                            newHeight = ((newWidth * OriginalFile.ratioHW) < 1) ? 1 : newWidth * OriginalFile.ratioHW;
+                            newHeight = ((newWidth * OriginalFile.RatioHw) < 1) ? 1 : newWidth * OriginalFile.RatioHw;
                         }
 
                     }
