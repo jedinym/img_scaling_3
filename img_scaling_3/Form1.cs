@@ -25,6 +25,16 @@ namespace img_scaling_3
             InitializeComponent();
         }
 
+        private void frm_main_Load(object sender, EventArgs e)
+        {
+            //btn_load.MouseEnter += InfoEvent;
+            foreach (Control c in Controls) // Looping through all controls to attach MouseEnter to InfoEvent events
+            {
+                c.MouseEnter += ShowInfoEvent;
+                c.MouseLeave += HideInfoEvent;
+            }
+        }
+
         private void btn_load_Click(object sender, EventArgs e)
         {
             lbl_saved.Visible = false;
@@ -278,6 +288,7 @@ namespace img_scaling_3
                 }
             }
         }
+
         private bool IsFileLocked(string _filepath)
         {
             FileInfo file = new FileInfo(_filepath);
@@ -301,6 +312,28 @@ namespace img_scaling_3
                 }
             }
             return false;
+        }
+
+        private void ShowInfoEvent(object sender, EventArgs e)
+        {
+            Control obj = (Control)sender;
+            string ctrlInfo;
+
+            try //If the control doesn't have a tag --> don't crash and erase Info
+            {
+                ctrlInfo = obj.Tag.ToString(); 
+            }
+            catch (NullReferenceException)
+            {
+                ctrlInfo = "";
+            }
+
+            lbl_info.Text = ctrlInfo;
+        }
+
+        private void HideInfoEvent(object sender, EventArgs e)
+        {
+            lbl_info.Text = "";
         }
     }
 }

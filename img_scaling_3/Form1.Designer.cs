@@ -44,6 +44,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.lbl_edit_size = new System.Windows.Forms.Label();
             this.btn_reset = new System.Windows.Forms.Button();
+            this.lbl_info = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_original)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_edited)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nmr_height)).BeginInit();
@@ -60,6 +61,7 @@
             this.pbx_original.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbx_original.TabIndex = 0;
             this.pbx_original.TabStop = false;
+            this.pbx_original.Tag = "Original image";
             // 
             // pbx_edited
             // 
@@ -71,6 +73,7 @@
             this.pbx_edited.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pbx_edited.TabIndex = 0;
             this.pbx_edited.TabStop = false;
+            this.pbx_edited.Tag = "Edited image";
             // 
             // btn_load
             // 
@@ -78,6 +81,7 @@
             this.btn_load.Name = "btn_load";
             this.btn_load.Size = new System.Drawing.Size(92, 23);
             this.btn_load.TabIndex = 1;
+            this.btn_load.Tag = "Load an image";
             this.btn_load.Text = "Load";
             this.btn_load.UseVisualStyleBackColor = true;
             this.btn_load.Click += new System.EventHandler(this.btn_load_Click);
@@ -89,6 +93,7 @@
             this.btn_resize.Name = "btn_resize";
             this.btn_resize.Size = new System.Drawing.Size(92, 23);
             this.btn_resize.TabIndex = 3;
+            this.btn_resize.Tag = "Scale to set size";
             this.btn_resize.Text = "Resize";
             this.btn_resize.UseVisualStyleBackColor = true;
             this.btn_resize.Click += new System.EventHandler(this.btn_resize_Click);
@@ -133,6 +138,7 @@
             this.btn_save.Name = "btn_save";
             this.btn_save.Size = new System.Drawing.Size(92, 23);
             this.btn_save.TabIndex = 7;
+            this.btn_save.Tag = "Save";
             this.btn_save.Text = "Save!";
             this.btn_save.UseVisualStyleBackColor = true;
             this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
@@ -153,6 +159,7 @@
             this.nmr_height.Name = "nmr_height";
             this.nmr_height.Size = new System.Drawing.Size(99, 20);
             this.nmr_height.TabIndex = 8;
+            this.nmr_height.Tag = "New height (width must be 0)";
             // 
             // nmr_width
             // 
@@ -170,11 +177,12 @@
             this.nmr_width.Name = "nmr_width";
             this.nmr_width.Size = new System.Drawing.Size(99, 20);
             this.nmr_width.TabIndex = 8;
+            this.nmr_width.Tag = "New width (height must be 0)";
             // 
             // lbl_orig_size
             // 
             this.lbl_orig_size.AutoSize = true;
-            this.lbl_orig_size.Location = new System.Drawing.Point(12, 466);
+            this.lbl_orig_size.Location = new System.Drawing.Point(167, 466);
             this.lbl_orig_size.Name = "lbl_orig_size";
             this.lbl_orig_size.Size = new System.Drawing.Size(0, 13);
             this.lbl_orig_size.TabIndex = 9;
@@ -192,7 +200,7 @@
             // lbl_edit_size
             // 
             this.lbl_edit_size.AutoSize = true;
-            this.lbl_edit_size.Location = new System.Drawing.Point(421, 466);
+            this.lbl_edit_size.Location = new System.Drawing.Point(589, 464);
             this.lbl_edit_size.Name = "lbl_edit_size";
             this.lbl_edit_size.Size = new System.Drawing.Size(0, 13);
             this.lbl_edit_size.TabIndex = 9;
@@ -205,9 +213,18 @@
             this.btn_reset.Name = "btn_reset";
             this.btn_reset.Size = new System.Drawing.Size(92, 23);
             this.btn_reset.TabIndex = 1;
+            this.btn_reset.Tag = "Reset to orig. img.";
             this.btn_reset.Text = "Reset";
             this.btn_reset.UseVisualStyleBackColor = true;
             this.btn_reset.Click += new System.EventHandler(this.btn_reset_Click);
+            // 
+            // lbl_info
+            // 
+            this.lbl_info.AutoSize = true;
+            this.lbl_info.Location = new System.Drawing.Point(12, 466);
+            this.lbl_info.Name = "lbl_info";
+            this.lbl_info.Size = new System.Drawing.Size(0, 13);
+            this.lbl_info.TabIndex = 10;
             // 
             // frm_main
             // 
@@ -215,6 +232,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(829, 486);
+            this.Controls.Add(this.lbl_info);
             this.Controls.Add(this.lbl_edit_size);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lbl_orig_size);
@@ -233,6 +251,7 @@
             this.MaximizeBox = false;
             this.Name = "frm_main";
             this.Text = "Bildskalierung 2.0";
+            this.Load += new System.EventHandler(this.frm_main_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pbx_original)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbx_edited)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nmr_height)).EndInit();
@@ -260,6 +279,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lbl_edit_size;
         private System.Windows.Forms.Button btn_reset;
+        private System.Windows.Forms.Label lbl_info;
     }
 }
 
